@@ -5,17 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Forces Feedback Survey · Chapter 5</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #F4F6FA; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  :root { --ease:cubic-bezier(.2,.8,.2,1); --ease-spring:cubic-bezier(.34,1.56,.64,1); }
+
+  /* ---- Force_Laws-style entrance animations ---- */
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes qIn { from { opacity: 0; transform: translateY(16px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes drop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes gaugeGlow { 0%,100% { filter: drop-shadow(0 0 2px rgba(255,255,255,.0)); } 50% { filter: drop-shadow(0 0 8px currentColor); } }
+  @keyframes ringDraw { from { stroke-dashoffset: var(--circ); } to { stroke-dashoffset: var(--target); } }
+  @keyframes barGrow { from { width: 0; } to { width: var(--w); } }
+  @keyframes floatUp { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+  @keyframes dropFall { from { transform: translateY(0); opacity:1; } to { transform: translateY(22px); opacity:0; } }
+
+  /* ---- interaction helpers ---- */
   button { -webkit-appearance: none; font-family: inherit; }
+  .lift-btn { transition: transform .18s var(--ease), box-shadow .18s var(--ease), filter .18s var(--ease) !important; }
+  .lift-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); }
+  .lift-btn:active:not(:disabled) { transform: translateY(0); }
+  .opt-btn { transition: transform .15s var(--ease), border-color .15s, background .15s, box-shadow .15s !important; }
+  .opt-btn:hover { transform: translateX(3px); box-shadow: 0 4px 14px rgba(15,23,42,.07); }
+  .opt-btn.sel { animation: pop .28s var(--ease-spring); }
+  .likert-btn { transition: transform .15s var(--ease), border-color .15s, background .15s, box-shadow .15s !important; }
+  .likert-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(15,23,42,.08); }
+  .likert-btn.sel { animation: pop .3s var(--ease-spring); }
+  .pulse-dot { display:inline-block; width:7px; height:7px; border-radius:50%; animation: pulse 1.6s infinite; }
+  .demo-pop { animation: zoomIn .4s var(--ease); }
+  .confetti-pc { position:absolute; top:0; will-change: transform, opacity; border-radius:2px; pointer-events:none; }
+
   input[type="range"] { -webkit-appearance: none; height: 6px; border-radius: 3px; background: #E2E8F0; outline: none; cursor: pointer; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; border: 3px solid #16A34A; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; border: 3px solid #16A34A; box-shadow: 0 2px 6px rgba(0,0,0,.15); transition: transform .12s var(--ease); cursor: grab; }
+  input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.18); cursor: grabbing; }
+  input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: white; border: 3px solid #16A34A; cursor: grab; }
   textarea:focus, input:focus { outline: none; }
+  textarea, input[type="text"] { transition: border-color .18s, box-shadow .18s; }
   details > summary { list-style: none; }
   details > summary::-webkit-details-marker { display: none; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
 </head>
 <body>
@@ -273,7 +308,7 @@ new Y(a,0,!1,a,null,!1,!1)});[["acceptCharset","accept-charset"],["className","c
 new Y(a,3,!1,a.toLowerCase(),null,!1,!1)});["checked","multiple","muted","selected"].forEach(function(a){R[a]=new Y(a,3,!0,a,null,!1,!1)});["capture","download"].forEach(function(a){R[a]=new Y(a,4,!1,a,null,!1,!1)});["cols","rows","size","span"].forEach(function(a){R[a]=new Y(a,6,!1,a,null,!1,!1)});["rowSpan","start"].forEach(function(a){R[a]=new Y(a,5,!1,a.toLowerCase(),null,!1,!1)});var Zf=/[\-:]([a-z])/g,$f=function(a){return a[1].toUpperCase()};"accent-height alignment-baseline arabic-form baseline-shift cap-height clip-path clip-rule color-interpolation color-interpolation-filters color-profile color-rendering dominant-baseline enable-background fill-opacity fill-rule flood-color flood-opacity font-family font-size font-size-adjust font-stretch font-style font-variant font-weight glyph-name glyph-orientation-horizontal glyph-orientation-vertical horiz-adv-x horiz-origin-x image-rendering letter-spacing lighting-color marker-end marker-mid marker-start overline-position overline-thickness paint-order panose-1 pointer-events rendering-intent shape-rendering stop-color stop-opacity strikethrough-position strikethrough-thickness stroke-dasharray stroke-dashoffset stroke-linecap stroke-linejoin stroke-miterlimit stroke-opacity stroke-width text-anchor text-decoration text-rendering underline-position underline-thickness unicode-bidi unicode-range units-per-em v-alphabetic v-hanging v-ideographic v-mathematical vector-effect vert-adv-y vert-origin-x vert-origin-y word-spacing writing-mode xmlns:xlink x-height".split(" ").forEach(function(a){var b=
 a.replace(Zf,$f);R[b]=new Y(b,1,!1,a,null,!1,!1)});"xlink:actuate xlink:arcrole xlink:role xlink:show xlink:title xlink:type".split(" ").forEach(function(a){var b=a.replace(Zf,$f);R[b]=new Y(b,1,!1,a,"http://www.w3.org/1999/xlink",!1,!1)});["xml:base","xml:lang","xml:space"].forEach(function(a){var b=a.replace(Zf,$f);R[b]=new Y(b,1,!1,a,"http://www.w3.org/XML/1998/namespace",!1,!1)});["tabIndex","crossOrigin"].forEach(function(a){R[a]=new Y(a,1,!1,a.toLowerCase(),null,!1,!1)});R.xlinkHref=new Y("xlinkHref",
 1,!1,"xlink:href","http://www.w3.org/1999/xlink",!0,!1);["src","href","action","formAction"].forEach(function(a){R[a]=new Y(a,1,!1,a.toLowerCase(),null,!0,!0)});var Sa=zb.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,sd=Symbol.for("react.element"),Cb=Symbol.for("react.portal"),Bb=Symbol.for("react.fragment"),fe=Symbol.for("react.strict_mode"),ee=Symbol.for("react.profiler"),hg=Symbol.for("react.provider"),gg=Symbol.for("react.context"),ie=Symbol.for("react.forward_ref"),ge=Symbol.for("react.suspense"),
-he=Symbol.for("react.suspense_list"),je=Symbol.for("react.memo"),Ta=Symbol.for("react.lazy");Symbol.for("react.scope");Symbol.for("react.debug_trace_mode");var Ui=Symbol.for("react.offscreen");Symbol.for("react.legacy_hidden");Symbol.for("react.cache");Symbol.for("react.tracing_marker");var fg=Symbol.iterator,E=Object.assign,ae,ce=!1,cc=Array.isArray,Xd,yi=function(a){return"undefined"!==typeof MSApp&&MSApp.UnsafeLocalFunction?function(b,c,d,e){MSApp.UnsafeLocalFunction(function(){return a(b,
+he=Symbol.for("react.suspense_list"),je=Symbol.for("react.memo"),Ta=Symbol.for("react.lazy");Symbol.for("react.scope");Symbol.for("react.debug_trace_mode");var Ui=Symbol.for("react.offscreen");Symbol.for("react.legacy_hidden");Symbol.for("react.cache");Symbol.for("react.tracing_marker");var fg=Symbol.iterator,E=Object.assign,ae,ce=!1,cc=Array.isArray,Xd,yi=function(a){return"undefined"!==typeof MSApp&&MSApp.execUnsafeLocalFunction?function(b,c,d,e){MSApp.execUnsafeLocalFunction(function(){return a(b,
 c,d,e)})}:a}(function(a,b){if("http://www.w3.org/2000/svg"!==a.namespaceURI||"innerHTML"in a)a.innerHTML=b;else{Xd=Xd||document.createElement("div");Xd.innerHTML="<svg>"+b.valueOf().toString()+"</svg>";for(b=Xd.firstChild;a.firstChild;)a.removeChild(a.firstChild);for(;b.firstChild;)a.appendChild(b.firstChild)}}),Fc=function(a,b){if(b){var c=a.firstChild;if(c&&c===a.lastChild&&3===c.nodeType){c.nodeValue=b;return}}a.textContent=b},dc={animationIterationCount:!0,aspectRatio:!0,borderImageOutset:!0,
 borderImageSlice:!0,borderImageWidth:!0,boxFlex:!0,boxFlexGroup:!0,boxOrdinalGroup:!0,columnCount:!0,columns:!0,flex:!0,flexGrow:!0,flexPositive:!0,flexShrink:!0,flexNegative:!0,flexOrder:!0,gridArea:!0,gridRow:!0,gridRowEnd:!0,gridRowSpan:!0,gridRowStart:!0,gridColumn:!0,gridColumnEnd:!0,gridColumnSpan:!0,gridColumnStart:!0,fontWeight:!0,lineClamp:!0,lineHeight:!0,opacity:!0,order:!0,orphans:!0,tabSize:!0,widows:!0,zIndex:!0,zoom:!0,fillOpacity:!0,floodOpacity:!0,stopOpacity:!0,strokeDasharray:!0,
 strokeDashoffset:!0,strokeMiterlimit:!0,strokeOpacity:!0,strokeWidth:!0},$k=["Webkit","ms","Moz","O"];Object.keys(dc).forEach(function(a){$k.forEach(function(b){b=b+a.charAt(0).toUpperCase()+a.substring(1);dc[b]=dc[a]})});var ij=E({menuitem:!0},{area:!0,base:!0,br:!0,col:!0,embed:!0,hr:!0,img:!0,input:!0,keygen:!0,link:!0,meta:!0,param:!0,source:!0,track:!0,wbr:!0}),ze=null,se=null,Eb=null,Fb=null,xg=function(a,b){return a(b)},yg=function(){},te=!1,Oe=!1;if(Ia)try{var Lc={};Object.defineProperty(Lc,
@@ -350,7 +385,7 @@ var _React = React,
 /* ══════════════════════════════════════
    GOOGLE APPS SCRIPT URL — PASTE YOURS HERE
    ══════════════════════════════════════ */
-var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxiNfA5DAWzVPXut6qfsQVECLWAg_1RwelXQ65co9Ax6_PTLLNNc_IxsKKK8LxMp8WWw/exec";
+var SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTUBhQ-sJz3mzxWilEm6V5Uthib6TKxSQ1jLLk0m2Wgunr9P_XhrliP47o2arKiHLGxoFS8Mr8a8lmIP51ZXAFoDKfwUtEb1VNRwp8B53qcuTEYCBCF9pSqdXijD0N_S4NigQS_pcKR6iZcFMht_horqO5S1xq0qmOga6D7P0bTtRAWW_tlWerk0A5Y81jkJPGkzcXO8pd3TcsbeOsqEApXJ6N9icHppHKUTFDfBcWzC9EdoRmiF7v31fFuplF1hsZ5ZX9sLEfFSXrNWhgn9QsmK3OGuA&lib=Mp9FNUIXdQv6gooT20-IBX1iLKFXXf_qJ";
 
 /* ══════════════════════════════════════
    COLORS
@@ -394,375 +429,253 @@ var C = {
    ══════════════════════════════════════ */
 
 function MiniPressureDemo() {
-  var _useState = useState(100),
-    _useState2 = _slicedToArray(_useState, 2),
-    force = _useState2[0],
-    setForce = _useState2[1];
-  var _useState3 = useState(1),
-    _useState4 = _slicedToArray(_useState3, 2),
-    areaIdx = _useState4[0],
-    setAreaIdx = _useState4[1];
-  var areas = [{
-    name: "📌 Nail",
-    cm2: 0.01,
-    w: 8
-  }, {
-    name: "👆 Finger",
-    cm2: 1,
-    w: 22
-  }, {
-    name: "✋ Palm",
-    cm2: 100,
-    w: 52
-  }, {
-    name: "🦶 Foot",
-    cm2: 200,
-    w: 72
-  }];
+  var s1 = useState(100), force = s1[0], setForce = s1[1];
+  var s2 = useState(1), areaIdx = s2[0], setAreaIdx = s2[1];
+  var s3 = useState({ indent: 36, press: 0, cracks: [] }), anim = s3[0], setAnim = s3[1];
+  var af = useRef(null);
+  var cur = useRef({ indent: 36 });
+  var areas = [
+    { name: "📌 Nail", cm2: 0.01, w: 8 },
+    { name: "👆 Finger", cm2: 1, w: 22 },
+    { name: "✋ Palm", cm2: 100, w: 52 },
+    { name: "🦶 Foot", cm2: 200, w: 72 }
+  ];
   var a = areas[areaIdx];
   var pressure = force / (a.cm2 / 10000);
-  var indent = Math.min(36, pressure / 500000 * 36);
+  var targetIndent = Math.min(36, pressure / 500000 * 36);
+  var pierces = pressure > 500000;
   var pStr = pressure >= 1e6 ? (pressure / 1e6).toFixed(1) + " MPa" : pressure >= 1000 ? (pressure / 1000).toFixed(1) + " kPa" : Math.round(pressure) + " Pa";
-  var effect = pressure > 500000 ? "Pierces through!" : pressure > 50000 ? "Deep indent" : pressure > 5000 ? "Slight dent" : "Barely noticeable";
+  var effect = pierces ? "Pierces through!" : pressure > 50000 ? "Deep indent" : pressure > 5000 ? "Slight dent" : "Barely noticeable";
+
+  useEffect(function () {
+    if (af.current) cancelAnimationFrame(af.current);
+    var indent = cur.current.indent;
+    var press = 7;
+    var cr = [];
+    if (pierces) { for (var i = 0; i < 9; i++) cr.push({ x: 150 + (Math.random() - 0.5) * 34, y: 86, vx: (Math.random() - 0.5) * 3.4, vy: 1 + Math.random() * 2, life: 1 }); }
+    var frame = 0;
+    function loop() {
+      frame++;
+      indent += (targetIndent - indent) * 0.2;
+      press *= 0.84;
+      cr = cr.map(function (c) { return { x: c.x + c.vx, y: c.y + c.vy, vx: c.vx, vy: c.vy + 0.16, life: c.life - 0.045 }; }).filter(function (c) { return c.life > 0; });
+      cur.current = { indent: indent };
+      setAnim({ indent: indent, press: press, cracks: cr.slice() });
+      var settled = Math.abs(targetIndent - indent) < 0.3 && press < 0.3 && cr.length === 0;
+      if (!settled && frame < 130) af.current = requestAnimationFrame(loop);
+      else { cur.current = { indent: targetIndent }; setAnim({ indent: targetIndent, press: 0, cracks: [] }); }
+    }
+    af.current = requestAnimationFrame(loop);
+    return function () { if (af.current) cancelAnimationFrame(af.current); };
+  }, [force, areaIdx]);
+
+  var indent = anim.indent, press = anim.press;
+  var objTop = 80 - 35 - indent * 0.3 + press;
+  var arrowTop = objTop - Math.min(40, force * 0.25);
   return /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: "linear-gradient(135deg,#EFF6FF,#DBEAFE)",
-      borderRadius: 12,
-      padding: 16,
-      border: "1px solid #BFDBFE"
-    }
+    className: "demo-pop",
+    style: { background: "linear-gradient(135deg,#EFF6FF,#DBEAFE)", borderRadius: 12, padding: 16, border: "1px solid #BFDBFE" }
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      color: C.blue,
-      marginBottom: 8,
-      letterSpacing: ".05em"
-    }
-  }, "\u25B6 TRY IT \u2014 Pressure Visualizer from the Teaching Deck"), /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 300 130",
-    style: {
-      width: "100%",
-      maxWidth: 360,
-      display: "block",
-      margin: "0 auto"
-    }
-  }, /*#__PURE__*/React.createElement("rect", {
-    x: "0",
-    y: "80",
-    width: "300",
-    height: "50",
-    fill: "#C2956E",
-    rx: "0"
-  }), /*#__PURE__*/React.createElement("ellipse", {
-    cx: "150",
-    cy: 80 + indent * 0.4,
-    rx: a.w * 0.8,
-    ry: indent,
-    fill: "#A37550"
-  }), /*#__PURE__*/React.createElement("rect", {
-    x: 150 - a.w / 2,
-    y: 80 - 35 - indent * 0.3,
-    width: a.w,
-    height: "35",
-    rx: "3",
-    fill: ["#94A3B8", "#F59E0B", "#3B82F6", "#14B8A6"][areaIdx],
-    stroke: "rgba(0,0,0,.15)",
-    strokeWidth: "1.5"
-  }), /*#__PURE__*/React.createElement("line", {
-    x1: "150",
-    y1: 80 - 35 - indent * 0.3 - Math.min(40, force * 0.25),
-    x2: "150",
-    y2: 80 - 35 - indent * 0.3,
-    stroke: "#EF4444",
-    strokeWidth: "3"
-  }), /*#__PURE__*/React.createElement("polygon", {
-    points: "145,".concat(80 - 35 - indent * 0.3, " 150,").concat(80 - 35 - indent * 0.3 + 6, " 155,").concat(80 - 35 - indent * 0.3),
-    fill: "#EF4444"
-  }), /*#__PURE__*/React.createElement("text", {
-    x: "150",
-    y: "16",
-    textAnchor: "middle",
-    fontSize: "11",
-    fontWeight: "700",
-    fill: "#1E293B"
-  }, force, " N \u2193"), /*#__PURE__*/React.createElement("text", {
-    x: "290",
-    y: "16",
-    textAnchor: "end",
-    fontSize: "10",
-    fontWeight: "700",
-    fill: "#1D4ED8"
-  }, "P = ", pStr), /*#__PURE__*/React.createElement("text", {
-    x: "290",
-    y: "30",
-    textAnchor: "end",
-    fontSize: "9",
-    fill: "#64748B"
-  }, effect)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 12
-    }
-  }, /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 11,
-      fontWeight: 600,
-      color: C.ink[700]
-    }
-  }, "Force: ", /*#__PURE__*/React.createElement("b", null, force, " N")), /*#__PURE__*/React.createElement("input", {
-    type: "range",
-    min: "10",
-    max: "500",
-    step: "10",
-    value: force,
-    onChange: function onChange(e) {
-      return setForce(+e.target.value);
-    },
-    style: {
-      width: "100%",
-      accentColor: C.blue,
-      cursor: "pointer"
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 4,
-      marginTop: 8,
-      flexWrap: "wrap"
-    }
-  }, areas.map(function (ar, i) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: i,
-      onClick: function onClick() {
-        return setAreaIdx(i);
-      },
-      style: {
-        flex: 1,
-        padding: "6px 4px",
-        borderRadius: 8,
-        fontSize: 11,
-        fontWeight: i === areaIdx ? 700 : 500,
-        border: "2px solid ".concat(i === areaIdx ? C.blue : C.ink[200]),
-        background: i === areaIdx ? "#DBEAFE" : "#fff",
-        color: i === areaIdx ? C.blue : C.ink[600],
-        cursor: "pointer",
-        fontFamily: "inherit",
-        minWidth: 60
-      }
-    }, ar.name);
-  })));
+    style: { fontSize: 11, fontWeight: 700, color: C.blue, marginBottom: 8, letterSpacing: ".05em" }
+  }, "▶ TRY IT — Pressure Visualizer from the Teaching Deck"), /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 300 130", style: { width: "100%", maxWidth: 360, display: "block", margin: "0 auto" }
+  },
+    /*#__PURE__*/React.createElement("rect", { x: "0", y: "80", width: "300", height: "50", fill: "#C2956E", rx: "0" }),
+    /*#__PURE__*/React.createElement("ellipse", { cx: "150", cy: 80 + indent * 0.4, rx: a.w * 0.8, ry: indent, fill: "#A37550" }),
+    pierces && /*#__PURE__*/React.createElement("ellipse", { cx: "150", cy: 80 + indent * 0.4, rx: a.w * 0.45, ry: indent * 0.6, fill: "#7C5A3C" }),
+    anim.cracks.map(function (c, i) {
+      return /*#__PURE__*/React.createElement("circle", { key: i, cx: c.x, cy: c.y, r: 1.6 + c.life * 1.6, fill: "rgba(124,90,60," + c.life.toFixed(2) + ")" });
+    }),
+    /*#__PURE__*/React.createElement("rect", { x: 150 - a.w / 2, y: objTop, width: a.w, height: "35", rx: "3", fill: ["#94A3B8", "#F59E0B", "#3B82F6", "#14B8A6"][areaIdx], stroke: "rgba(0,0,0,.15)", strokeWidth: "1.5" }),
+    /*#__PURE__*/React.createElement("line", { x1: "150", y1: arrowTop, x2: "150", y2: objTop, stroke: "#EF4444", strokeWidth: "3" }),
+    /*#__PURE__*/React.createElement("polygon", { points: "145,".concat(objTop, " 150,").concat(objTop + 6, " 155,").concat(objTop), fill: "#EF4444" }),
+    /*#__PURE__*/React.createElement("text", { x: "150", y: "16", textAnchor: "middle", fontSize: "11", fontWeight: "700", fill: "#1E293B" }, force, " N ↓"),
+    /*#__PURE__*/React.createElement("text", { x: "290", y: "16", textAnchor: "end", fontSize: "10", fontWeight: "700", fill: "#1D4ED8" }, "P = ", pStr),
+    /*#__PURE__*/React.createElement("text", { x: "290", y: "30", textAnchor: "end", fontSize: "9", fontWeight: pierces ? "700" : "400", fill: pierces ? "#DC2626" : "#64748B" }, effect)
+  ), /*#__PURE__*/React.createElement("div", { style: { marginTop: 12 } },
+    /*#__PURE__*/React.createElement("label", { style: { fontSize: 11, fontWeight: 600, color: C.ink[700] } }, "Force: ", /*#__PURE__*/React.createElement("b", null, force, " N")),
+    /*#__PURE__*/React.createElement("input", { type: "range", min: "10", max: "500", step: "10", value: force, onChange: function (e) { return setForce(+e.target.value); }, style: { width: "100%", accentColor: C.blue, cursor: "pointer" } })
+  ), /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" } },
+    areas.map(function (ar, i) {
+      var on = i === areaIdx;
+      return /*#__PURE__*/React.createElement("button", {
+        key: i, className: "opt-btn" + (on ? " sel" : ""), onClick: function () { return setAreaIdx(i); },
+        style: { flex: 1, padding: "6px 4px", borderRadius: 8, fontSize: 11, fontWeight: on ? 700 : 500, border: "2px solid ".concat(on ? C.blue : C.ink[200]), background: on ? "#DBEAFE" : "#fff", color: on ? C.blue : C.ink[600], cursor: "pointer", fontFamily: "inherit", minWidth: 60, boxShadow: on ? "0 4px 12px rgba(37,99,235,.22)" : "none" }
+      }, ar.name);
+    })
+  ));
 }
 function MiniForceDemo() {
-  var _useState5 = useState("speed"),
-    _useState6 = _slicedToArray(_useState5, 2),
-    mode = _useState6[0],
-    setMode = _useState6[1];
-  var _useState7 = useState(false),
-    _useState8 = _slicedToArray(_useState7, 2),
-    applied = _useState8[0],
-    setApplied = _useState8[1];
-  var _useState9 = useState(25),
-    _useState0 = _slicedToArray(_useState9, 2),
-    force = _useState0[0],
-    setForce = _useState0[1];
-  var _useState1 = useState({
-      x: 60,
-      y: 50
-    }),
-    _useState10 = _slicedToArray(_useState1, 2),
-    pos = _useState10[0],
-    setPos = _useState10[1];
-  var _useState11 = useState(0),
-    _useState12 = _slicedToArray(_useState11, 2),
-    squeeze = _useState12[0],
-    setSqueeze = _useState12[1];
-  var animRef = useRef(null);
-  var reset = function reset() {
-    setApplied(false);
-    setPos({
-      x: 60,
-      y: 50
-    });
-    setSqueeze(0);
-    if (animRef.current) cancelAnimationFrame(animRef.current);
-  };
-  var apply = function apply() {
-    reset();
-    setApplied(true);
-    if (mode === "shape") {
-      setSqueeze(force);
-      return;
-    }
-    var x = 60,
-      y = 50,
-      frame = 0;
-    var _step = function step() {
+  var s1 = useState("speed"), mode = s1[0], setMode = s1[1];
+  var s2 = useState(false), applied = s2[0], setApplied = s2[1];
+  var s3 = useState(25), force = s3[0], setForce = s3[1];
+  var s4 = useState({ cx: 80, cy: 64, sx: 1, sy: 1, rot: 0 }), b = s4[0], setB = s4[1];
+  var s5 = useState([]), trail = s5[0], setTrail = s5[1];
+  var s6 = useState([]), parts = s6[0], setParts = s6[1];
+  var s7 = useState(""), tag = s7[0], setTag = s7[1];
+  var af = useRef(null);
+  var IDLE = { cx: 80, cy: 64, sx: 1, sy: 1, rot: 0 };
+  var stop = function () { if (af.current) cancelAnimationFrame(af.current); af.current = null; };
+  var reset = function () { stop(); setApplied(false); setB(IDLE); setTrail([]); setParts([]); setTag(""); };
+  useEffect(function () { return function () { if (af.current) cancelAnimationFrame(af.current); }; }, []);
+
+  var apply = function () {
+    stop(); setApplied(true); setTrail([]); setParts([]); setTag("");
+    var fN = force / 50;
+    var box = { cx: 80, cy: 64, sx: 1, sy: 1, rot: 0 };
+    var vx = 0, vy = 0, frame = 0, struck = false, boxDone = false;
+    var T = [], P = [];
+    function burst(x, y, color) { for (var i = 0; i < 11; i++) { var ang = Math.PI * 2 * i / 11; P.push({ x: x, y: y, vx: Math.cos(ang) * (1 + Math.random() * 2.2), vy: Math.sin(ang) * (1 + Math.random() * 2.2), life: 1, color: color, r: 2 + Math.random() * 2.4 }); } }
+    function loop() {
       frame++;
-      if (mode === "speed") x = Math.min(230, 60 + frame * force * 0.08);
-      if (mode === "direction") {
-        x = Math.min(230, 60 + frame * 2);
-        y = Math.max(10, 50 - frame * 1.2);
+      if (mode === "speed") {
+        if (!boxDone) {
+          vx += 0.10 + fN * 0.55;
+          box.cx += vx;
+          var spd = Math.min(1, vx / 14);
+          box.sx = 1 + spd * 0.45; box.sy = 1 - spd * 0.22;
+          if (frame % 2 === 0) { T.push({ cx: box.cx, cy: box.cy, sx: box.sx, sy: box.sy, o: 0.5 }); if (T.length > 7) T.shift(); }
+          if (box.cx >= 250) { box.cx = 250; box.sx = 0.8; box.sy = 1.22; boxDone = true; burst(255, 64, "#16A34A"); setTag("Bigger force → more speed!"); }
+        } else { box.sx += (1 - box.sx) * 0.2; box.sy += (1 - box.sy) * 0.2; }
+      } else if (mode === "direction") {
+        if (!struck) {
+          box.cx += 3.2;
+          if (box.cx >= 138) { struck = true; vx = 2.2; vy = -(1.8 + fN * 3.2); burst(box.cx, box.cy, "#2563EB"); setTag("Force changed its direction!"); }
+        } else { vy += 0.16; box.cx += vx; box.cy += vy; box.rot += 7; if (frame % 2 === 0) { T.push({ cx: box.cx, cy: box.cy, sx: 1, sy: 1, o: 0.5 }); if (T.length > 8) T.shift(); } }
+        if (box.cx > 272 || box.cy > 96) boxDone = true;
+      } else { /* shape */
+        var target = 1 - fN * 0.5;
+        vy = vy * 0.78 + (target - box.sy) * 0.18;
+        box.sy += vy;
+        box.sx = 1 + (1 - box.sy) * 1.1;
+        box.cx = 80 + (1 - box.sy) * 9;
+        if (Math.abs(target - box.sy) < 0.005 && Math.abs(vy) < 0.005) { box.sy = target; box.sx = 1 + (1 - target) * 1.1; boxDone = true; setTag("Force changed its shape!"); }
       }
-      setPos({
-        x: x,
-        y: y
-      });
-      if (frame < 80 && x < 230) animRef.current = requestAnimationFrame(_step);
-    };
-    animRef.current = requestAnimationFrame(_step);
+      T = T.map(function (t) { return { cx: t.cx, cy: t.cy, sx: t.sx, sy: t.sy, o: t.o * 0.82 }; }).filter(function (t) { return t.o > 0.05; });
+      P = P.map(function (p) { return { x: p.x + p.vx, y: p.y + p.vy, vx: p.vx, vy: p.vy + 0.12, life: p.life - 0.05, color: p.color, r: p.r }; }).filter(function (p) { return p.life > 0; });
+      setB({ cx: box.cx, cy: box.cy, sx: box.sx, sy: box.sy, rot: box.rot });
+      setTrail(T.slice()); setParts(P.slice());
+      var allDone = boxDone && T.length === 0 && P.length === 0;
+      if (!allDone && frame < 260) af.current = requestAnimationFrame(loop);
+      else af.current = null;
+    }
+    af.current = requestAnimationFrame(loop);
   };
-  useEffect(function () {
-    return function () {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
-  }, []);
-  var bw = 40 - (applied && mode === "shape" ? squeeze * 0.3 : 0);
-  var bh = 30 + (applied && mode === "shape" ? squeeze * 0.2 : 0);
+
+  function boxRect(o, fill, stroke, op) {
+    var w = 40 * o.sx, h = 30 * o.sy;
+    return /*#__PURE__*/React.createElement("rect", { x: o.cx - w / 2, y: o.cy - h / 2, width: w, height: h, rx: 5, fill: fill, stroke: stroke, strokeWidth: stroke ? 1.5 : 0, opacity: op == null ? 1 : op, transform: "rotate(" + (o.rot || 0) + " " + o.cx + " " + o.cy + ")" });
+  }
   return /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: "linear-gradient(135deg,#F0FDF4,#DCFCE7)",
-      borderRadius: 12,
-      padding: 16,
-      border: "1px solid #BBF7D0"
-    }
+    className: "demo-pop",
+    style: { background: "linear-gradient(135deg,#F0FDF4,#DCFCE7)", borderRadius: 12, padding: 16, border: "1px solid #BBF7D0" }
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      fontWeight: 700,
-      color: C.green,
-      marginBottom: 8,
-      letterSpacing: ".05em"
-    }
-  }, "\u25B6 TRY IT \u2014 Force Effects from the Virtual Lab"), /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 300 100",
-    style: {
-      width: "100%",
-      maxWidth: 360,
-      display: "block",
-      margin: "0 auto",
-      background: "linear-gradient(180deg,#F0FDF4,#D1FAE5)",
-      borderRadius: 8
-    }
-  }, /*#__PURE__*/React.createElement("rect", {
-    x: "0",
-    y: "80",
-    width: "300",
-    height: "20",
-    fill: "#D1D5DB"
-  }), /*#__PURE__*/React.createElement("rect", {
-    x: pos.x,
-    y: pos.y,
-    width: bw,
-    height: bh,
-    rx: "4",
-    fill: "#22C55E",
-    stroke: "#15803D",
-    strokeWidth: "1.5"
-  }), /*#__PURE__*/React.createElement("text", {
-    x: pos.x + bw / 2,
-    y: pos.y + bh / 2 + 4,
-    textAnchor: "middle",
-    fontSize: "14"
-  }, "\uD83D\uDCE6"), !applied && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
-    x1: pos.x - force * 0.5 - 5,
-    y1: pos.y + bh / 2,
-    x2: pos.x - 2,
-    y2: pos.y + bh / 2,
-    stroke: "#EF4444",
-    strokeWidth: "2.5"
-  }), /*#__PURE__*/React.createElement("polygon", {
-    points: "".concat(pos.x - 2, ",").concat(pos.y + bh / 2 - 5, " ").concat(pos.x + 4, ",").concat(pos.y + bh / 2, " ").concat(pos.x - 2, ",").concat(pos.y + bh / 2 + 5),
-    fill: "#EF4444"
-  })), /*#__PURE__*/React.createElement("text", {
-    x: "10",
-    y: "14",
-    fontSize: "9",
-    fontWeight: "700",
-    fill: "#334155"
-  }, "Mode: ", mode.toUpperCase(), " | ", force, "N")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 4,
-      marginTop: 10
-    }
-  }, ["speed", "direction", "shape"].map(function (m) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: m,
-      onClick: function onClick() {
-        setMode(m);
-        reset();
-      },
-      style: {
-        flex: 1,
-        padding: "6px",
-        borderRadius: 8,
-        fontSize: 11,
-        fontWeight: mode === m ? 700 : 500,
-        border: "2px solid ".concat(mode === m ? C.green : C.ink[200]),
-        background: mode === m ? "#DCFCE7" : "#fff",
-        color: mode === m ? "#15803D" : C.ink[600],
-        cursor: "pointer",
-        fontFamily: "inherit"
+    style: { fontSize: 11, fontWeight: 700, color: C.green, marginBottom: 8, letterSpacing: ".05em" }
+  }, "▶ TRY IT — Force Effects from the Virtual Lab"), /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 300 100", style: { width: "100%", maxWidth: 360, display: "block", margin: "0 auto", background: "linear-gradient(180deg,#F0FDF4,#D1FAE5)", borderRadius: 8 }
+  },
+    /*#__PURE__*/React.createElement("rect", { x: "0", y: "80", width: "300", height: "20", fill: "#D1D5DB" }),
+    trail.map(function (t, i) { return /*#__PURE__*/React.createElement("g", { key: "tr" + i }, boxRect(t, "#22C55E", null, t.o * 0.5)); }),
+    boxRect(b, "#22C55E", "#15803D"),
+    /*#__PURE__*/React.createElement("text", { x: b.cx, y: b.cy + 5, textAnchor: "middle", fontSize: "14", transform: "rotate(" + (b.rot || 0) + " " + b.cx + " " + b.cy + ")" }, "📦"),
+    parts.map(function (p, i) { return /*#__PURE__*/React.createElement("circle", { key: "p" + i, cx: p.x, cy: p.y, r: p.r * p.life, fill: p.color, opacity: p.life }); }),
+    !applied && /*#__PURE__*/React.createElement(React.Fragment, null,
+      /*#__PURE__*/React.createElement("line", { x1: b.cx - 20 - force * 0.5 - 5, y1: b.cy, x2: b.cx - 22, y2: b.cy, stroke: "#EF4444", strokeWidth: "2.5" }),
+      /*#__PURE__*/React.createElement("polygon", { points: "".concat(b.cx - 22, ",").concat(b.cy - 5, " ").concat(b.cx - 16, ",").concat(b.cy, " ").concat(b.cx - 22, ",").concat(b.cy + 5), fill: "#EF4444" })
+    ),
+    /*#__PURE__*/React.createElement("text", { x: "10", y: "14", fontSize: "9", fontWeight: "700", fill: "#334155" }, "Mode: ", mode.toUpperCase(), " | ", force, "N"),
+    tag && /*#__PURE__*/React.createElement("text", { x: "290", y: "14", textAnchor: "end", fontSize: "9", fontWeight: "700", fill: "#15803D" }, tag)
+  ), /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 4, marginTop: 10 } },
+    ["speed", "direction", "shape"].map(function (m) {
+      var on = mode === m;
+      return /*#__PURE__*/React.createElement("button", {
+        key: m, className: "opt-btn" + (on ? " sel" : ""), onClick: function () { setMode(m); reset(); },
+        style: { flex: 1, padding: "6px", borderRadius: 8, fontSize: 11, fontWeight: on ? 700 : 500, border: "2px solid ".concat(on ? C.green : C.ink[200]), background: on ? "#DCFCE7" : "#fff", color: on ? "#15803D" : C.ink[600], cursor: "pointer", fontFamily: "inherit", boxShadow: on ? "0 4px 12px rgba(34,197,94,.22)" : "none" }
+      }, m === "speed" ? "🏃 Speed" : m === "direction" ? "↩️ Direction" : "🔧 Shape");
+    })
+  ), /*#__PURE__*/React.createElement("div", { style: { marginTop: 8 } },
+    /*#__PURE__*/React.createElement("label", { style: { fontSize: 11, fontWeight: 600, color: C.ink[700] } }, "Force: ", /*#__PURE__*/React.createElement("b", null, force, " N")),
+    /*#__PURE__*/React.createElement("input", { type: "range", min: "5", max: "50", value: force, onChange: function (e) { setForce(+e.target.value); reset(); }, style: { width: "100%", accentColor: C.green, cursor: "pointer" } })
+  ), /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 6, marginTop: 8 } },
+    /*#__PURE__*/React.createElement("button", { className: "lift-btn", onClick: apply, style: { flex: 1, padding: "8px", borderRadius: 8, fontSize: 12, fontWeight: 700, background: C.green, color: "#fff", border: "none", cursor: "pointer", fontFamily: "inherit", boxShadow: "0 2px 10px rgba(34,197,94,.4)" } }, "▶ Apply Force!"),
+    /*#__PURE__*/React.createElement("button", { className: "lift-btn", onClick: reset, style: { padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "#fff", color: C.ink[700], border: "1px solid ".concat(C.ink[200]), cursor: "pointer", fontFamily: "inherit" } }, "↺")
+  ));
+}
+
+function MiniStudioDemo() {
+  var s1 = useState(true), gravity = s1[0], setGravity = s1[1];
+  var s2 = useState(0), count = s2[0], setCount = s2[1];
+  var ballsRef = useRef([]);
+  var gRef = useRef(true);
+  var s3 = useState([]), view = s3[0], setView = s3[1];
+  var af = useRef(null);
+  var W = 300, H = 120, FLOOR = 104;
+  var COLORS = ["#7C3AED", "#2563EB", "#16A34A", "#F59E0B", "#E11D48", "#0891B2"];
+  var addBall = function () {
+    if (ballsRef.current.length >= 8) return;
+    var r = 8 + Math.random() * 6;
+    ballsRef.current.push({ x: 30 + Math.random() * (W - 60), y: 20 + Math.random() * 20, vx: (Math.random() - 0.5) * 5, vy: Math.random() * 2, r: r, color: COLORS[ballsRef.current.length % COLORS.length] });
+    setCount(ballsRef.current.length);
+  };
+  var clear = function () { ballsRef.current = []; setCount(0); setView([]); };
+  useEffect(function () {
+    ballsRef.current = [
+      { x: 70, y: 30, vx: 2.4, vy: 0, r: 12, color: COLORS[0] },
+      { x: 170, y: 24, vx: -1.8, vy: 0, r: 10, color: COLORS[1] },
+      { x: 230, y: 40, vx: 1.2, vy: 0, r: 14, color: COLORS[2] }
+    ];
+    setCount(3);
+    function loop() {
+      var g = gRef.current;
+      var B = ballsRef.current;
+      for (var i = 0; i < B.length; i++) {
+        var p = B[i];
+        if (g) p.vy += 0.35;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x - p.r < 4) { p.x = 4 + p.r; p.vx = Math.abs(p.vx) * 0.96; }
+        if (p.x + p.r > W - 4) { p.x = W - 4 - p.r; p.vx = -Math.abs(p.vx) * 0.96; }
+        if (p.y + p.r > FLOOR) { p.y = FLOOR - p.r; p.vy = -Math.abs(p.vy) * (g ? 0.74 : 0.99); if (g && Math.abs(p.vy) < 0.6) p.vy = 0; }
+        if (p.y - p.r < 4) { p.y = 4 + p.r; p.vy = Math.abs(p.vy) * 0.9; }
+        if (!g) { p.vx *= 0.999; }
       }
-    }, m === "speed" ? "🏃 Speed" : m === "direction" ? "↩️ Direction" : "🔧 Shape");
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 8
+      setView(B.map(function (p) { return { x: p.x, y: p.y, r: p.r, color: p.color }; }));
+      af.current = requestAnimationFrame(loop);
     }
-  }, /*#__PURE__*/React.createElement("label", {
-    style: {
-      fontSize: 11,
-      fontWeight: 600,
-      color: C.ink[700]
-    }
-  }, "Force: ", /*#__PURE__*/React.createElement("b", null, force, " N")), /*#__PURE__*/React.createElement("input", {
-    type: "range",
-    min: "5",
-    max: "50",
-    value: force,
-    onChange: function onChange(e) {
-      setForce(+e.target.value);
-      reset();
-    },
-    style: {
-      width: "100%",
-      accentColor: C.green,
-      cursor: "pointer"
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 6,
-      marginTop: 8
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: apply,
-    style: {
-      flex: 1,
-      padding: "8px",
-      borderRadius: 8,
-      fontSize: 12,
-      fontWeight: 700,
-      background: C.green,
-      color: "#fff",
-      border: "none",
-      cursor: "pointer",
-      fontFamily: "inherit"
-    }
-  }, "\u25B6 Apply Force!"), /*#__PURE__*/React.createElement("button", {
-    onClick: reset,
-    style: {
-      padding: "8px 14px",
-      borderRadius: 8,
-      fontSize: 12,
-      fontWeight: 600,
-      background: "#fff",
-      color: C.ink[700],
-      border: "1px solid ".concat(C.ink[200]),
-      cursor: "pointer",
-      fontFamily: "inherit"
-    }
-  }, "\u21BA")));
+    af.current = requestAnimationFrame(loop);
+    return function () { if (af.current) cancelAnimationFrame(af.current); };
+  }, []);
+  var toggleG = function () { var n = !gravity; setGravity(n); gRef.current = n; };
+  function chip(label, on, onClick, color) {
+    return /*#__PURE__*/React.createElement("button", {
+      className: "opt-btn" + (on ? " sel" : ""), onClick: onClick,
+      style: { flex: 1, padding: "7px 4px", borderRadius: 8, fontSize: 11, fontWeight: on ? 700 : 600, border: "2px solid " + (on ? color : C.ink[200]), background: on ? color + "1A" : "#fff", color: on ? color : C.ink[600], cursor: "pointer", fontFamily: "inherit", boxShadow: on ? "0 4px 12px " + color + "22" : "none" }
+    }, label);
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "demo-pop",
+    style: { background: "linear-gradient(135deg,#FAF5FF,#EDE9FE)", borderRadius: 12, padding: 16, border: "1px solid #DDD6FE" }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 11, fontWeight: 700, color: "#7C3AED", marginBottom: 8, letterSpacing: ".05em" }
+  }, "▶ TRY IT — The Studio (build & experiment live)"), /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 300 120", style: { width: "100%", maxWidth: 360, display: "block", margin: "0 auto", background: "linear-gradient(180deg,#FAF5FF,#EDE9FE)", borderRadius: 8, border: "1px solid #EDE9FE" }
+  },
+    /*#__PURE__*/React.createElement("rect", { x: "0", y: FLOOR, width: W, height: H - FLOOR, fill: "#DDD6FE" }),
+    view.map(function (p, i) {
+      return /*#__PURE__*/React.createElement("g", { key: i },
+        /*#__PURE__*/React.createElement("ellipse", { cx: p.x, cy: FLOOR - 1, rx: p.r * 0.9, ry: 3, fill: "rgba(124,58,237,.15)" }),
+        /*#__PURE__*/React.createElement("circle", { cx: p.x, cy: p.y, r: p.r, fill: p.color }),
+        /*#__PURE__*/React.createElement("circle", { cx: p.x - p.r * 0.32, cy: p.y - p.r * 0.32, r: p.r * 0.28, fill: "rgba(255,255,255,.45)" })
+      );
+    }),
+    /*#__PURE__*/React.createElement("text", { x: "10", y: "15", fontSize: "9", fontWeight: "700", fill: "#5B21B6" }, "Gravity: ", gravity ? "ON ↓" : "OFF — floating"),
+    /*#__PURE__*/React.createElement("text", { x: "290", y: "15", textAnchor: "end", fontSize: "9", fontWeight: "700", fill: "#7C3AED" }, count, " objects")
+  ), /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 4, marginTop: 10 } },
+    chip(gravity ? "🌍 Gravity ON" : "🌌 Gravity OFF", true, toggleG, "#7C3AED"),
+    chip("➕ Add object", false, addBall, "#2563EB"),
+    chip("🧹 Clear", false, clear, "#E11D48")
+  ), /*#__PURE__*/React.createElement("p", {
+    style: { fontSize: 11, color: C.ink[500], margin: "9px 2px 0", lineHeight: 1.5 }
+  }, "Toggle gravity, drop in objects, and watch them bounce and settle — the Studio lets you build a scene and see the physics react instantly."));
 }
 function MiniAtmosDemo() {
   var _useState13 = useState(false),
@@ -900,7 +813,8 @@ function MiniAtmosDemo() {
       cx: 85 + i * 15,
       cy: 110 + i * 5,
       r: "4",
-      fill: "rgba(96,165,250,.5)"
+      fill: "rgba(96,165,250,.5)",
+      style: { animation: "dropFall .9s ease-in " + (i * 0.12) + "s infinite", transformOrigin: "center" }
     });
   })))), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -979,6 +893,7 @@ function Likert(_ref) {
     var on = value === i;
     return /*#__PURE__*/React.createElement("button", {
       key: i,
+      className: "likert-btn" + (on ? " sel" : ""),
       onClick: function onClick() {
         return onChange(i);
       },
@@ -995,7 +910,7 @@ function Likert(_ref) {
         cursor: "pointer",
         fontFamily: "inherit",
         lineHeight: 1.3,
-        transition: "all .15s"
+        boxShadow: on ? "0 4px 14px " + accent + "33" : "none"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
@@ -1020,6 +935,7 @@ function SingleSel(_ref2) {
     var on = value === i;
     return /*#__PURE__*/React.createElement("button", {
       key: i,
+      className: "opt-btn" + (on ? " sel" : ""),
       onClick: function onClick() {
         return onChange(i);
       },
@@ -1037,7 +953,7 @@ function SingleSel(_ref2) {
         display: "flex",
         alignItems: "center",
         gap: 10,
-        transition: "all .15s"
+        boxShadow: on ? "0 4px 14px " + accent + "22" : "none"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
@@ -1078,6 +994,7 @@ function MultiSel(_ref3) {
     var on = value.includes(i);
     return /*#__PURE__*/React.createElement("button", {
       key: i,
+      className: "opt-btn" + (on ? " sel" : ""),
       onClick: function onClick() {
         return toggle(i);
       },
@@ -1095,7 +1012,7 @@ function MultiSel(_ref3) {
         display: "flex",
         alignItems: "center",
         gap: 10,
-        transition: "all .15s"
+        boxShadow: on ? "0 4px 14px " + accent + "22" : "none"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
@@ -1784,6 +1701,28 @@ var TEACHER_STEPS = [{
     }));
   }
 }, {
+  id: "t_studio",
+  label: "The Studio",
+  qText: "The Studio — useful for teaching? + how it helps",
+  render: function render(ans, set, accent) {
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+      style: { fontSize: 13, color: C.ink[600], lineHeight: 1.6, marginBottom: 14 }
+    }, "The ", /*#__PURE__*/React.createElement("b", null, "Studio"), " is an open sandbox where you (or your students) build a scene and watch the physics react live. Try it below."), /*#__PURE__*/React.createElement(MiniStudioDemo, null), /*#__PURE__*/React.createElement("div", {
+      style: { marginTop: 18, fontSize: 14, fontWeight: 700, color: C.ink[900], marginBottom: 10 }
+    }, "Did you find the Studio useful for teaching?"), /*#__PURE__*/React.createElement(SingleSel, {
+      options: ["Very useful — a live sandbox makes concepts click", "Useful — great for demos and 'what if' questions", "Somewhat — nice, but I'd want guided tasks built in", "Not useful — too open-ended for my classroom"],
+      value: ans == null ? undefined : ans.useful,
+      onChange: function onChange(v) { return set(Object.assign({}, ans, { useful: v })); },
+      accent: accent
+    }), /*#__PURE__*/React.createElement("div", {
+      style: { marginTop: 18, fontSize: 14, fontWeight: 700, color: C.ink[900], marginBottom: 10 }
+    }, "How does the Studio help you teach this chapter?"), /*#__PURE__*/React.createElement(TextArea, {
+      placeholder: "e.g., students test their own ideas, I can pose live challenges, easy to show cause & effect\u2026",
+      value: ans == null ? "" : ans.how,
+      onChange: function onChange(v) { return set(Object.assign({}, ans, { how: v })); }
+    }));
+  }
+}, {
   id: "t_adopt",
   label: "Final Thoughts",
   qText: "Would you adopt + open feedback",
@@ -2074,6 +2013,28 @@ var STUDENT_STEPS = [{
     });
   }
 }, {
+  id: "s_studio",
+  label: "The Studio",
+  qText: "The Studio — useful? + how it helps you learn",
+  render: function render(ans, set, accent) {
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+      style: { fontSize: 13, color: C.ink[600], lineHeight: 1.6, marginBottom: 14 }
+    }, "The ", /*#__PURE__*/React.createElement("b", null, "Studio"), " lets you build your own setup \u2014 drop in objects, switch gravity on or off, and watch what happens. Have a play:"), /*#__PURE__*/React.createElement(MiniStudioDemo, null), /*#__PURE__*/React.createElement("div", {
+      style: { marginTop: 18, fontSize: 14, fontWeight: 700, color: C.ink[900], marginBottom: 10 }
+    }, "Did you find the Studio useful?"), /*#__PURE__*/React.createElement(SingleSel, {
+      options: ["Loved it \u2014 building my own experiments is the best part", "Useful \u2014 I learn more when I can try things myself", "Somewhat \u2014 fun, but I wasn't sure what to do", "Not really \u2014 I'd rather be shown the steps"],
+      value: ans == null ? undefined : ans.useful,
+      onChange: function onChange(v) { return set(Object.assign({}, ans, { useful: v })); },
+      accent: accent
+    }), /*#__PURE__*/React.createElement("div", {
+      style: { marginTop: 18, fontSize: 14, fontWeight: 700, color: C.ink[900], marginBottom: 10 }
+    }, "How does the Studio help you learn?"), /*#__PURE__*/React.createElement(TextArea, {
+      placeholder: "e.g., I can test my own ideas, I see why things happen, it's more fun than watching\u2026",
+      value: ans == null ? "" : ans.how,
+      onChange: function onChange(v) { return set(Object.assign({}, ans, { how: v })); }
+    }));
+  }
+}, {
   id: "s_improve",
   label: "Improve",
   qText: "What to change + want more labs?",
@@ -2196,6 +2157,332 @@ function generateReadableText(surveyType, steps, answers) {
    RESULTS SCREEN WITH DOWNLOAD
    ══════════════════════════════════════ */
 
+function OutcomeReport(props) {
+  var steps = props.steps,
+    answers = props.answers,
+    theme = props.theme;
+  var mk = React.createElement;
+  var rootRef = useRef(null);
+  var qSteps = steps.slice(1);
+  var total = qSteps.length;
+  function has(a) {
+    if (a === undefined || a === null) return false;
+    if (typeof a === "string") return a.trim().length > 0;
+    if (Array.isArray(a)) return a.length > 0;
+    if (_typeof(a) === "object") return Object.keys(a).length > 0;
+    return true;
+  }
+  var answered = qSteps.filter(function (s) {
+    return has(answers[s.id]);
+  }).length;
+  var written = 0,
+    choices = 0,
+    multi = 0,
+    grids = 0,
+    quizDone = false;
+  qSteps.forEach(function (s) {
+    var a = answers[s.id];
+    if (!has(a)) return;
+    if (typeof a === "string") written++;else if (typeof a === "number") choices++;else if (Array.isArray(a)) multi++;else if (_typeof(a) === "object") {
+      Object.keys(a).forEach(function (k) {
+        var v = a[k];
+        if (typeof v === "string") {
+          if (v.trim()) written++;
+        } else if (typeof v === "number") {
+          choices++;
+          if (k === "quiz") quizDone = true;
+        } else if (Array.isArray(v)) {
+          grids++;
+        } else if (v && _typeof(v) === "object") {
+          grids++;
+        }
+      });
+    }
+  });
+  var completeness = total ? Math.round(answered / total * 100) : 0;
+  var depthRaw = written * 2 + multi + grids + choices * 0.5;
+  var depthPct = Math.min(100, Math.round(depthRaw / Math.max(1, total * 1.4) * 100));
+  var score = Math.round(completeness * 0.6 + depthPct * 0.4);
+  var tier = score >= 85 ? {
+    l: "Outstanding",
+    e: "🌟",
+    c: "#16A34A"
+  } : score >= 65 ? {
+    l: "Strong",
+    e: "✅",
+    c: theme.accent
+  } : score >= 40 ? {
+    l: "Good start",
+    e: "👍",
+    c: "#D97706"
+  } : {
+    l: "Just getting going",
+    e: "🌱",
+    c: "#64748B"
+  };
+  var takeaway = score >= 85 ? "You gave thorough, detailed feedback across the board — exactly the kind of input that shapes the next version." : score >= 65 ? "Solid, useful feedback. A couple more written notes would make it even more actionable." : score >= 40 ? "Good foundation — revisiting the questions you skipped and adding a written thought or two would round it out." : "You can strengthen this a lot by answering more questions and adding a written comment.";
+
+  // animated count-up for the score
+  var _cu = useState(0),
+    _cu2 = _slicedToArray(_cu, 2),
+    shown = _cu2[0],
+    setShown = _cu2[1];
+  useEffect(function () {
+    var start = null,
+      dur = 1100;
+    var raf;
+    function tick(t) {
+      if (!start) start = t;
+      var p = Math.min(1, (t - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      setShown(Math.round(eased * score));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+    return function () {
+      return cancelAnimationFrame(raf);
+    };
+  }, [score]);
+
+  // confetti burst on mount
+  useEffect(function () {
+    var host = rootRef.current;
+    if (!host) return;
+    var colors = ["#F59E0B", "#16A34A", "#2563EB", "#E11D48", "#A855F7", theme.accent];
+    for (var i = 0; i < 46; i++) {
+      var pc = document.createElement("div");
+      pc.className = "confetti-pc";
+      var sz = 6 + Math.random() * 7;
+      pc.style.width = sz + "px";
+      pc.style.height = sz * (0.5 + Math.random()) + "px";
+      pc.style.left = 50 + (Math.random() - 0.5) * 24 + "%";
+      pc.style.background = colors[i % colors.length];
+      pc.style.opacity = "0";
+      host.appendChild(pc);
+      var dx = (Math.random() - 0.5) * 320;
+      var dy = 160 + Math.random() * 220;
+      var rot = (Math.random() - 0.5) * 720;
+      pc.animate([{
+        transform: "translate(0,-10px) rotate(0deg)",
+        opacity: 1
+      }, {
+        transform: "translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)",
+        opacity: 0
+      }], {
+        duration: 1400 + Math.random() * 900,
+        easing: "cubic-bezier(.2,.6,.3,1)",
+        delay: Math.random() * 250
+      }).onfinish = function (e) {
+        if (e && e.target && e.target.effect && e.target.effect.target) e.target.effect.target.remove();
+      };
+    }
+  }, []);
+  var R = 46,
+    circ = 2 * Math.PI * R,
+    targetOff = circ * (1 - score / 100);
+  function bar(label, val, max, color) {
+    var pct = Math.min(100, Math.round(val / Math.max(1, max) * 100));
+    return mk("div", {
+      style: {
+        marginBottom: 10
+      }
+    }, mk("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        fontSize: 12,
+        fontWeight: 600,
+        color: C.ink[700],
+        marginBottom: 5
+      }
+    }, mk("span", null, label), mk("span", {
+      style: {
+        color: color,
+        fontWeight: 800
+      }
+    }, val)), mk("div", {
+      style: {
+        height: 8,
+        borderRadius: 5,
+        background: C.ink[100],
+        overflow: "hidden"
+      }
+    }, mk("div", {
+      style: _defineProperty({
+        height: "100%",
+        width: pct + "%",
+        background: color,
+        borderRadius: 5,
+        animation: "barGrow 1s cubic-bezier(.2,.8,.2,1) both"
+      }, "--w", pct + "%")
+    })));
+  }
+  return mk("div", {
+    ref: rootRef,
+    style: {
+      position: "relative",
+      background: C.card,
+      borderRadius: 16,
+      padding: "24px 22px",
+      border: "1px solid " + C.bdr,
+      boxShadow: "0 2px 12px rgba(15,23,42,.06)",
+      marginBottom: 16,
+      overflow: "hidden",
+      animation: "rise .5s cubic-bezier(.2,.8,.2,1)"
+    }
+  }, mk("div", {
+    style: {
+      fontSize: 11,
+      fontWeight: 800,
+      letterSpacing: ".12em",
+      textTransform: "uppercase",
+      color: C.ink[400],
+      marginBottom: 16,
+      display: "flex",
+      alignItems: "center",
+      gap: 8
+    }
+  }, mk("span", {
+    className: "pulse-dot",
+    style: {
+      background: tier.c
+    }
+  }), "Your Feedback Outcome"),
+  // gauge + tier
+  mk("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 18,
+      marginBottom: 20,
+      flexWrap: "wrap"
+    }
+  }, mk("div", {
+    style: {
+      position: "relative",
+      width: 116,
+      height: 116,
+      flexShrink: 0
+    }
+  }, mk("svg", {
+    viewBox: "0 0 116 116",
+    style: {
+      width: 116,
+      height: 116
+    }
+  }, mk("circle", {
+    cx: 58,
+    cy: 58,
+    r: R,
+    fill: "none",
+    stroke: C.ink[100],
+    strokeWidth: 10
+  }), mk("circle", {
+    cx: 58,
+    cy: 58,
+    r: R,
+    fill: "none",
+    stroke: tier.c,
+    strokeWidth: 10,
+    strokeLinecap: "round",
+    strokeDasharray: circ,
+    style: _defineProperty(_defineProperty({
+      transform: "rotate(-90deg)",
+      transformOrigin: "center",
+      animation: "ringDraw 1.1s cubic-bezier(.2,.8,.2,1) forwards"
+    }, "--circ", circ + "px"), "--target", targetOff + "px")
+  })), mk("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center"
+    }
+  }, mk("div", {
+    style: {
+      fontSize: 30,
+      fontWeight: 900,
+      color: C.ink[900],
+      lineHeight: 1,
+      fontFamily: "'JetBrains Mono',monospace"
+    }
+  }, shown), mk("div", {
+    style: {
+      fontSize: 9,
+      fontWeight: 700,
+      letterSpacing: ".1em",
+      color: C.ink[400],
+      textTransform: "uppercase",
+      marginTop: 2
+    }
+  }, "Engagement"))), mk("div", {
+    style: {
+      flex: "1 1 160px"
+    }
+  }, mk("div", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 7,
+      background: tier.c + "16",
+      color: tier.c,
+      borderRadius: 20,
+      padding: "5px 13px",
+      fontSize: 13,
+      fontWeight: 800,
+      marginBottom: 8,
+      animation: "pop .4s cubic-bezier(.34,1.56,.64,1)"
+    }
+  }, mk("span", {
+    style: {
+      fontSize: 15
+    }
+  }, tier.e), tier.l), mk("p", {
+    style: {
+      fontSize: 13,
+      color: C.ink[600],
+      lineHeight: 1.55,
+      margin: 0
+    }
+  }, takeaway))),
+  // response profile bars
+  mk("div", {
+    style: {
+      borderTop: "1px solid " + C.ink[100],
+      paddingTop: 16
+    }
+  }, mk("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 800,
+      color: C.ink[700],
+      marginBottom: 12
+    }
+  }, "📊 Your response profile"), bar("Sections completed", answered + " of " + total, total, theme.accent), bar("Choices & ratings made", choices, Math.max(1, total), C.blue), bar("Multi-selects", multi, Math.max(1, total), "#A855F7"), bar("Written comments", written, Math.max(1, total), C.green)),
+  // knowledge badge
+  quizDone && mk("div", {
+    style: {
+      marginTop: 14,
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      padding: "11px 14px",
+      borderRadius: 12,
+      background: "#F0FDF4",
+      border: "1px solid #BBF7D0",
+      animation: "floatUp .5s ease both",
+      fontSize: 13,
+      fontWeight: 600,
+      color: "#15803D"
+    }
+  }, mk("span", {
+    style: {
+      fontSize: 18
+    }
+  }, "🧠"), "Knowledge check attempted — nice, hands-on feedback counts double."));
+}
 function ResultsScreen(_ref12) {
   var surveyType = _ref12.surveyType,
     steps = _ref12.steps,
@@ -2228,35 +2515,18 @@ function ResultsScreen(_ref12) {
         return s.id;
       })
     };
-    // Use hidden iframe + GET — avoids all CORS issues with Google Apps Script
-    try {
-      var iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.name = "survey_submit_" + Date.now();
-      document.body.appendChild(iframe);
-      var encoded = encodeURIComponent(JSON.stringify(payload));
-      iframe.src = SCRIPT_URL + "?data=" + encoded;
-      // Listen for success message from the script
-      var done = false;
-      var onMsg = function(evt) {
-        if (evt.data === "survey_success") {
-          done = true;
-          setSubmitStatus("success");
-          window.removeEventListener("message", onMsg);
-        }
-      };
-      window.addEventListener("message", onMsg);
-      // Fallback: assume success after 5 seconds if no error
-      setTimeout(function () {
-        if (!done) {
-          setSubmitStatus("success");
-          window.removeEventListener("message", onMsg);
-        }
-        try { document.body.removeChild(iframe); } catch(e){}
-      }, 5000);
-    } catch (err) {
-      setSubmitStatus("error");
-    }
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify(payload)
+    }).then(function () {
+      return setSubmitStatus("success");
+    }).catch(function () {
+      return setSubmitStatus("error");
+    });
   }, []);
   var name = answers[steps[0].id] || "Anonymous";
   var answeredCount = steps.filter(function (s) {
@@ -2352,7 +2622,11 @@ function ResultsScreen(_ref12) {
       opacity: .7,
       fontWeight: 600
     }
-  }, "Questions answered"))), submitStatus === "sending" && /*#__PURE__*/React.createElement("div", {
+  }, "Questions answered"))), /*#__PURE__*/React.createElement(OutcomeReport, {
+    steps: steps,
+    answers: answers,
+    theme: theme
+  }), submitStatus === "sending" && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "14px 18px",
       borderRadius: 12,
@@ -2714,9 +2988,20 @@ function Survey(_ref15) {
       width: "".concat((step + 1) / total * 100, "%"),
       background: theme.grad,
       borderRadius: 3,
-      transition: "width .35s"
+      transition: "width .45s cubic-bezier(.34,1.56,.64,1)",
+      boxShadow: "0 0 10px " + theme.accent + "66",
+      position: "relative",
+      overflow: "hidden"
     }
-  })), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      background: "linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)",
+      backgroundSize: "200% 100%",
+      animation: "shimmer 2.2s linear infinite"
+    }
+  }))), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11,
       fontWeight: 700,
@@ -2724,13 +3009,15 @@ function Survey(_ref15) {
       whiteSpace: "nowrap"
     }
   }, step + 1, "/", total)), /*#__PURE__*/React.createElement("div", {
+    key: "qcard" + step,
     style: {
       background: C.card,
       borderRadius: 14,
       padding: "24px 20px",
       border: "1px solid ".concat(C.bdr),
       boxShadow: "0 2px 12px rgba(15,23,42,.06)",
-      minHeight: 280
+      minHeight: 280,
+      animation: "qIn .42s cubic-bezier(.2,.8,.2,1)"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2740,6 +3027,11 @@ function Survey(_ref15) {
       marginBottom: 14
     }
   }, /*#__PURE__*/React.createElement("span", {
+    className: "pulse-dot",
+    style: {
+      background: theme.accent
+    }
+  }), /*#__PURE__*/React.createElement("span", {
     style: {
       padding: "3px 10px",
       borderRadius: 10,
@@ -2758,6 +3050,7 @@ function Survey(_ref15) {
       alignItems: "center"
     }
   }, /*#__PURE__*/React.createElement("button", {
+    className: "lift-btn",
     onClick: function onClick() {
       return setStep(function (s) {
         return Math.max(0, s - 1);
@@ -2783,6 +3076,7 @@ function Survey(_ref15) {
       fontWeight: 600
     }
   }, answeredCount, "/", total, " done"), step < total - 1 ? /*#__PURE__*/React.createElement("button", {
+    className: "lift-btn",
     onClick: function onClick() {
       return setStep(function (s) {
         return s + 1;
@@ -2801,6 +3095,7 @@ function Survey(_ref15) {
       boxShadow: "0 2px 10px ".concat(theme.accent, "40")
     }
   }, "Next \u2192") : /*#__PURE__*/React.createElement("button", {
+    className: "lift-btn",
     onClick: function onClick() {
       return setDone(true);
     },
